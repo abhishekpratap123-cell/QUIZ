@@ -4,8 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Special Proposal by Abhishek Pratap</title>
-  <!-- Canvas Confetti Library -->
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <style>
     * {
       box-sizing: border-box;
@@ -53,7 +51,7 @@
       text-shadow: 0 0 10px rgba(255, 105, 180, 0.5);
     }
 
-    /* Loading Screen */
+    /* Loading Box */
     .loading-box {
       background: rgba(255, 255, 255, 0.05);
       backdrop-filter: blur(10px);
@@ -231,7 +229,7 @@
   </div>
 
   <script>
-    // Floating Hearts Setup
+    // Background Hearts
     const bgHearts = document.getElementById('bgHearts');
     for (let i = 0; i < 15; i++) {
       const heart = document.createElement('span');
@@ -303,29 +301,24 @@
     const inputBox = document.getElementById('inputBox');
     const userNameInput = document.getElementById('userNameInput');
 
-    window.addEventListener('DOMContentLoaded', () => {
-      runLoadingSequence();
-    });
+    // Run progress bar
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += 2;
+      progressBar.style.width = progress + '%';
+      percentageText.innerText = progress + '%';
 
-    function runLoadingSequence() {
-      let progress = 0;
-      const interval = setInterval(() => {
-        progress += 2;
-        progressBar.style.width = progress + '%';
-        percentageText.innerText = progress + '%';
+      if(progress === 40) loadingText.innerText = "Searching for the prettiest smile...";
+      if(progress === 80) loadingText.innerText = "Found 1 Result ❤️";
 
-        if(progress === 40) loadingText.innerText = "Searching for the prettiest smile...";
-        if(progress === 80) loadingText.innerText = "Found 1 Result ❤️";
-
-        if (progress >= 100) {
-          clearInterval(interval);
-          setTimeout(() => {
-            loadingScreen.classList.add('hidden');
-            showEnvelope();
-          }, 300);
-        }
-      }, 40);
-    }
+      if (progress >= 100) {
+        clearInterval(interval);
+        setTimeout(() => {
+          loadingScreen.classList.add('hidden');
+          showEnvelope();
+        }, 300);
+      }
+    }, 40);
 
     function showEnvelope() {
       cardScreen.classList.add('hidden');
@@ -426,14 +419,6 @@
       inputBox.classList.add('hidden');
       buttonGroup.innerHTML = '';
       sendResponseToEmail();
-
-      if (typeof confetti === 'function') {
-        confetti({
-          particleCount: 120,
-          spread: 70,
-          origin: { y: 0.6 }
-        });
-      }
     }
   </script>
 </body>
