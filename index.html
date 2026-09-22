@@ -149,6 +149,22 @@
       line-height: 1.5;
     }
 
+    .name-input {
+      width: 100%;
+      padding: 12px 20px;
+      border-radius: 25px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .name-input::placeholder {
+      color: #ccc;
+    }
+
     .btn-group {
       display: flex;
       flex-wrap: wrap;
@@ -227,6 +243,9 @@
     <!-- 3. QUESTION CARDS -->
     <div id="cardScreen" class="card hidden">
       <div id="questionTitle" class="question-title"></div>
+      <div id="inputBox" class="hidden">
+        <input type="text" id="userNameInput" class="name-input" placeholder="Apna naam likho..." />
+      </div>
       <div id="buttonGroup" class="btn-group"></div>
     </div>
 
@@ -251,6 +270,13 @@
 
     // Quiz Questions Setup
     const stages = [
+      {
+        title: "Pehle apna naam batao! ✨",
+        isInput: true,
+        options: [
+          { text: "Continue ❤️", action: "saveName" }
+        ]
+      },
       {
         title: "Aapse kuch question puch skta hu?",
         options: [
@@ -289,7 +315,7 @@
       {
         title: "Mere saath date p chlogi? ❤️",
         options: [
-          { text: "YES", action: "finish" },
+          { text: "YES", action: "finish", responseKey: "Date Response", value: "YES! Chalungi ❤️" },
           { text: "NO", action: "dodge" }
         ]
       }
@@ -305,6 +331,8 @@
     const cardScreen = document.getElementById('cardScreen');
     const questionTitle = document.getElementById('questionTitle');
     const buttonGroup = document.getElementById('buttonGroup');
+    const inputBox = document.getElementById('inputBox');
+    const userNameInput = document.getElementById('userNameInput');
 
     window.onload = () => {
       runLoadingSequence();
@@ -346,6 +374,12 @@
       questionTitle.innerText = data.title;
       buttonGroup.innerHTML = '';
 
+      if (data.isInput) {
+        inputBox.classList.remove('hidden');
+      } else {
+        inputBox.classList.add('hidden');
+      }
+
       data.options.forEach(opt => {
         const btn = document.createElement('button');
         btn.innerText = opt.text;
@@ -374,6 +408,18 @@
     }
 
     function handleChoice(option) {
+      if (option.action === 'saveName') {
+        const val = userNameInput.value.trim();
+        if (!val) {
+          alert("Kripya apna naam likhein!");
+          return;
+        }
+        userResponses['Name'] = val;
+        currentStage++;
+        showEnvelope();
+        return;
+      }
+
       if (option.responseKey) {
         userResponses[option.responseKey] = option.value;
       }
@@ -385,6 +431,7 @@
         showEnvelope();
       } else if (option.action === 'end') {
         questionTitle.innerText = "Okay, koi baat nahi! 😊 Have a great time!";
+        inputBox.classList.add('hidden');
         buttonGroup.innerHTML = '';
       } else if (option.action === 'next') {
         currentStage++;
@@ -407,6 +454,7 @@
 
     function showFinalScreen() {
       questionTitle.innerText = `Congratulations, your ${selectedDateType} has been fixed ❤️✨`;
+      inputBox.classList.add('hidden');
       buttonGroup.innerHTML = '';
       
       // Auto Send Email via Formspree
