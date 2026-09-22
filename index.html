@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Special Proposal by Abhishek Pratap</title>
-  <!-- Canvas Confetti Library for Final Celebration -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <style>
     * {
@@ -89,7 +88,7 @@
       color: #ddd;
     }
 
-    /* Screen 2: Envelope Transition Screen */
+    /* Screen 2: Envelope Screen */
     .envelope-wrapper {
       cursor: pointer;
       display: inline-block;
@@ -126,7 +125,7 @@
       z-index: 2;
     }
 
-    /* Question Cards Wrapper */
+    /* Cards Wrapper */
     .card {
       background: rgba(255, 255, 255, 0.08);
       backdrop-filter: blur(15px);
@@ -212,15 +211,12 @@
 </head>
 <body>
 
-  <!-- Floating Hearts Background -->
   <div class="bg-hearts" id="bgHearts"></div>
 
   <div class="container">
     
-    <!-- Branding Header -->
     <div class="dev-credit">✨ Crafted with ❤️ by Abhishek Pratap ✨</div>
 
-    <!-- 1. LOADING SCREEN -->
     <div id="loadingScreen" class="loading-box">
       <div id="loadingText" class="loading-text">Initializing Love.exe...</div>
       <div class="progress-bar-bg">
@@ -229,7 +225,6 @@
       <div id="percentageText" class="percentage">0%</div>
     </div>
 
-    <!-- 2. ENVELOPE SCREEN -->
     <div id="envelopeScreen" class="hidden">
       <p style="margin-bottom: 15px; font-size: 1.1rem; color: #ffb6c1;">A Letter Arrived 💌</p>
       <div class="envelope-wrapper" onclick="openEnvelope()">
@@ -240,7 +235,6 @@
       <p style="margin-top: 15px; font-size: 0.85rem; color: #aaa;">Tap the envelope to open it</p>
     </div>
 
-    <!-- 3. QUESTION CARDS -->
     <div id="cardScreen" class="card hidden">
       <div id="questionTitle" class="question-title"></div>
       <div id="inputBox" class="hidden">
@@ -265,13 +259,15 @@
 
     // Sequence & User Responses Data
     let currentStage = 0;
-    let selectedDateType = "Coffee Date";
-    let userResponses = {};
+    let selectedDateType = "Not Chosen Yet";
+    let userResponses = {
+      "Quiz Status": "In Progress"
+    };
 
     // Quiz Questions Setup
     const stages = [
       {
-        title: "Pehle apna naam batao! ✨",
+        title: "Drop your name ✨",
         isInput: true,
         options: [
           { text: "Continue ❤️", action: "saveName" }
@@ -315,7 +311,7 @@
       {
         title: "Mere saath date p chlogi? ❤️",
         options: [
-          { text: "YES", action: "finish", responseKey: "Date Response", value: "YES! Chalungi ❤️" },
+          { text: "YES", action: "finish", responseKey: "Mere Saath Date Par Chlogi?", value: "YES! Chalungi ❤️" },
           { text: "NO", action: "dodge" }
         ]
       }
@@ -430,13 +426,17 @@
         currentStage++;
         showEnvelope();
       } else if (option.action === 'end') {
+        // If user quits early (e.g. clicks NO on 'Are you single?')
+        userResponses['Quiz Status'] = 'Left Incomplete (Said NO at "Are you single?")';
         questionTitle.innerText = "Okay, koi baat nahi! 😊 Have a great time!";
         inputBox.classList.add('hidden');
         buttonGroup.innerHTML = '';
+        sendResponseToEmail(); // Send early quit status to email
       } else if (option.action === 'next') {
         currentStage++;
         showEnvelope();
       } else if (option.action === 'finish') {
+        userResponses['Quiz Status'] = 'Completed Fully ❤️';
         showFinalScreen();
       }
     }
